@@ -835,18 +835,25 @@ const handleGameEndd = async (shouldUpdateLeaderboard: boolean = true) => {
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
+        <div className="flex row-auto space-x-2">
+
+                
                 <Button
-                  onClick={() => confirmOverwrite(true)}
-                  className="bg-green-500 text-white"
+                  onClick={() => confirmOverwrite(true)}     
+                 className="bg-green-500 text-white py-1 px-3 text-xs sm:text-sm font-bold rounded-md hover:bg-green-600 w-full sm:w-auto"
+
                 >
                   Yes, Overwrite
                 </Button>
                 <Button
                   onClick={() => setShowOverwriteDialog(false)}
-                  className="bg-red-500 text-white"
+                  className="bg-red-500 text-white py-1 px-3 text-xs sm:text-sm font-bold rounded-md hover:bg-red-600 w-full sm:w-auto"
+
                 >
                   No, Cancel
                 </Button>
+        </div>
+
               </DialogFooter>
             </DialogContent>
           </Dialog>
