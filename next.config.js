@@ -1,4 +1,3 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -11,6 +10,23 @@ const nextConfig = {
         hostname: '*.public.blob.vercel-storage.com'
       }
     ]
+  },
+  async headers() {
+    return [
+      {
+        source: '/(.*)', // Apply these headers to all routes
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'ALLOWALL' // Allow from any domain
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors *" // Allow from any domain
+          }
+        ]
+      }
+    ];
   }
 };
 
