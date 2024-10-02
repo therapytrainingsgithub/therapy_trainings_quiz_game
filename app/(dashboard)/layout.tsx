@@ -66,6 +66,10 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
             </main>
           </div>
           <Analytics />
+          <div className="w-full bg-[#709D50] text-white py-4 text-center " style={{ overflowX: 'hidden' }}>
+        <p className="text-sm">© 2024 Therapy Trainings. All rights reserved.</p>
+      </div>
+
         </main>
       </BreadcrumbProvider>
     </Providers>

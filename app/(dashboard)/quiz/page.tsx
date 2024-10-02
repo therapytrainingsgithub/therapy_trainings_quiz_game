@@ -896,7 +896,7 @@ const renderLeaderboard = () => {
   }
 
   return (
-    <div className="w-full bg-white rounded-lg shadow-lg p-6 mb-10">
+    <div className="w-full bg-white shadow-lg p-6 " style={{borderRadius: '20px'}}>
       <h2 className="text-[#191919] text-center text-[28px] sm:text-[24px] font-roboto font-bold mb-4">
         Leaderboard
       </h2>
@@ -980,14 +980,14 @@ const renderLeaderboard = () => {
 if (!isQuizStarted) {
   return (
     <div
-    className="min-h-screen flex flex-col justify-start items-center"
-    style={{ paddingTop: '5px', overflowX: 'hidden' }} // Adjusted padding for mobile
+    className="flex flex-col justify-start items-center gap-8 py-8"
+    style={{  overflowX: 'hidden' }}
   >
     <div
       className="w-full py-10 text-center flex flex-col items-center justify-center relative rounded-lg"
       style={{
         background: 'linear-gradient(115deg, #FCFEF2 10%, #91BF70 90%)',
-        borderRadius: '20px',  // Adjust border radius for mobile
+        borderRadius: '20px',
         maxWidth: '100%',
         overflowX: 'hidden',
         boxSizing: 'border-box',
@@ -1090,12 +1090,9 @@ if (!isQuizStarted) {
       </div>
     </div>
   
-    <div id="leaderboard-section" className="w-full px-2 mt-5" style={{ overflowX: 'hidden' }}>
+    <div id="leaderboard-section" className="w-full" style={{ overflowX: 'hidden' }}>
       {renderLeaderboard()}
   
-      <div className="w-full bg-[#709D50] text-white py-4 text-center mt-6" style={{ overflowX: 'hidden' }}>
-        <p className="text-sm">© 2024 Therapy Trainings. All rights reserved.</p>
-      </div>
     </div>
   </div>
   );
