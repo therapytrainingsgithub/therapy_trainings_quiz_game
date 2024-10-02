@@ -67,6 +67,25 @@ function shuffleArray(array: Question[]): Question[] {
   return array;
 }
 
+function selectRandomElements(array: Question[], count: number): Question[] {
+  const selected: Question[] = [];
+  const usedIndices = new Set<number>();
+
+  while (selected.length < count) {
+    const randomIndex = Math.floor(Math.random() * array.length);
+    
+    // Check if the index is already used
+    if (!usedIndices.has(randomIndex)) {
+      selected.push(array[randomIndex]);
+      usedIndices.add(randomIndex); // Mark the index as used
+    }
+  }
+
+  return selected;
+}
+
+
+
 export default function QuizPage() {
   const buttonsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const [difficulty, setDifficulty] = useState(1); 
@@ -246,10 +265,10 @@ export default function QuizPage() {
         explanation: q.explanation,  // Single explanation from the server
         difficulty: q.difficulty,
       }));
-  
-      const shuffledQuestions = shuffleArray(fetchedQuestions).slice(0, 10);
+      console.log("before 😭  ",fetchedQuestions)
+      const shuffledQuestions = selectRandomElements(fetchedQuestions,10);
       setQuestions(shuffledQuestions);
-  
+      console.log("after 🙌",selectRandomElements(fetchedQuestions,10))
       if (shuffledQuestions.length > 0) {
         loadNewQuestion(0, shuffledQuestions); // Load the first question
       }
@@ -293,7 +312,7 @@ const loadNewQuestion = (index: number, questionsList: Question[]) => {
   setFiftyFiftyOptions([]);
   setPhoneFriendResponse(null);
   // setLifelineUsed({ poll: false, phone: false, fiftyFifty: false });
-  // setLifelineUsed({ poll: false, phone: false, fiftyFifty: false });
+  setLifelineUsed({ poll: false, phone: false, fiftyFifty: false });
   setShowAudiencePoll(false);
 
   if (mode === 'classic') {
@@ -1099,7 +1118,6 @@ if (!isQuizStarted) {
   
     <div id="leaderboard-section" className="w-full" style={{ overflowX: 'hidden' }}>
       {renderLeaderboard()}
-  
     </div>
   </div>
   );
