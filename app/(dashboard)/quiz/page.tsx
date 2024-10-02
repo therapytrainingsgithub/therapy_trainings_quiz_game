@@ -781,24 +781,7 @@ const handleGameEndd = async (shouldUpdateLeaderboard: boolean = true) => {
   };
   
   if (isRoundCompleted) {
-
-    // if (roundWon === 10) {
-    //   return (
-    //     <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F5] overflow-x-hidden">  {/* Prevent horizontal scrolling */}
-    //       <Card className="w-full max-w-md sm:max-w-2xl p-4 sm:p-8 bg-white rounded-lg shadow-lg text-center">
-    //         <div className="text-3xl font-bold text-green-600 mb-4">Champion!</div>
-    //         <p className="text-lg text-gray-800 mb-6">You have successfully completed all 10 rounds!</p>
-    //         <Button onClick={resetGame} className="bg-[#709D51] text-white py-2 px-6 text-lg font-bold">
-    //           Play Again
-    //         </Button>
-    //       </Card>
-    //     </div>
-    //   );
-    // }
-    // else
-    // {
-      
-      return (
+  return (
         
         <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F5]">
         {/* Confetti Background */}
@@ -1325,13 +1308,12 @@ return (
           <button  onClick={useAudiencePoll} disabled={lifelineUsed.poll}>
             <img src={lifelineUsed.poll ? "disabled_aud.png" : "poll.png"} alt="Audience Poll"/>
           </button>
-          <button className="select-none pointer-events-none" onClick={usePhoneFriend} disabled={lifelineUsed.phone}>
+          <button onClick={usePhoneFriend} disabled={lifelineUsed.phone}>
             <img src={lifelineUsed.phone ? "disabled_phone.png" : "phonee.png"} alt="Phone a Friend" />
           </button>
           <button onClick={useFiftyFifty} disabled={lifelineUsed.fiftyFifty}>
-            <img className="select-none pointer-events-none" src={lifelineUsed.fiftyFifty ? "disabled_50.png" : "fifty.png"} alt="50:50 Lifeline" 
-                  draggable="false"
-                  />
+            <img  src={lifelineUsed.fiftyFifty ? "disabled_50.png" : "fifty.png"} alt="50:50 Lifeline"
+            />
           </button>
         </div>
 
