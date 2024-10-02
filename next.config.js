@@ -17,12 +17,8 @@ const nextConfig = {
         source: '/(.*)', // Apply these headers to all routes
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'ALLOWALL' // Allow from any domain
-          },
-          {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors *" // Allow from any domain
+            value: "frame-ancestors 'self' *;" // Allows framing from any domain, including self
           }
         ]
       }
