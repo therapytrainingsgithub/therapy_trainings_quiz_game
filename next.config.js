@@ -14,16 +14,21 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)', // Apply these headers to all routes
+        source: '/(.*)',
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' *;" // Allows framing from any domain, including self
+            value: "frame-ancestors 'self' *;"
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'ALLOWALL' // Allows your app to be embedded in an iframe
           }
         ]
       }
     ];
   }
+  
 };
 
 module.exports = nextConfig;

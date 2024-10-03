@@ -21,14 +21,12 @@ export async function updateSession(request: NextRequest) {
         cookiesToSet.forEach(({ name, value, options }) => {
           options = {
             ...options,
-            sameSite: 'none',  // Must be lowercase
+            sameSite: 'none',  // Must be lowercase for cross-origin access
             secure: true,      // Required with SameSite=None
           };
           supabaseResponse.cookies.set(name, value, options); // Set cookie on response
         });
       }
-      
-      
     }
   });
 
