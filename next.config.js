@@ -18,11 +18,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://therapy-trainings-quiz-game-psi.vercel.app/quiz;"
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'ALLOW-FROM https://therapy-trainings-quiz-game-psi.vercel.app/quiz'
+            value: "frame-ancestors 'self' https://www.therapytrainings.com/pages/collection-sandbox;"
           },
           {
             key: 'Cache-Control',
