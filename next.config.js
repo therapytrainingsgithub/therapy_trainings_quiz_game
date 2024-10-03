@@ -18,11 +18,11 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://therapy-trainings-quiz-game-psi.vercel.app/quiz"
+            value: "frame-ancestors 'self' https://therapy-trainings-quiz-game-psi.vercel.app;"
           },
           {
             key: 'X-Frame-Options',
-            value: 'ALLOW-FROM https://therapy-trainings-quiz-game-psi.vercel.app/quiz'
+            value: 'ALLOW-FROM https://therapy-trainings-quiz-game-psi.vercel.app'
           },
           {
             key: 'Cache-Control',
@@ -40,8 +40,6 @@ const nextConfig = {
       }
     ];
   }
-  
-  
 };
 
 module.exports = nextConfig;
