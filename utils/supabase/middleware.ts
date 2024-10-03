@@ -19,16 +19,13 @@ export async function updateSession(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) =>
-          request.cookies.set(name, value)
-        );
-        supabaseResponse = NextResponse.next({
-          request
+        cookiesToSet.forEach(({ name, value, options }) => {
+          // Assuming you need to specify options in the value itself
+          const cookieValue = `${value}; Path=${options.path || '/'}; Max-Age=${options.maxAge || 3600}; HttpOnly; Secure; SameSite=${options.sameSite || 'lax'}`;
+          request.cookies.set(name, cookieValue);
         });
-        cookiesToSet.forEach(({ name, value, options }) =>
-          supabaseResponse.cookies.set(name, value, options)
-        );
       }
+      
     }
   });
 
