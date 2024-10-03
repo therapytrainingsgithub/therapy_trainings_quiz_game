@@ -1,12 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request
-  });
-
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_KEY;
   if (!supabaseUrl || !supabaseKey) {
@@ -19,18 +14,16 @@ export async function updateSession(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) =>
-          request.cookies.set(name, value)
-        );
-        supabaseResponse = NextResponse.next({
-          request
+        cookiesToSet.forEach(({ name, value, options }) => {
+          // Ensure cookies are set with SameSite=none and Secure if not localhost
+          const cookieOptions = `; SameSite=${options.sameSite}; Secure=${options.secure}`;
+          request.cookies.set(name, `${value}${cookieOptions}`);
         });
-        cookiesToSet.forEach(({ name, value, options }) =>
-          supabaseResponse.cookies.set(name, value, options)
-        );
       }
     }
   });
+
+  let supabaseResponse = NextResponse.next();
 
   // Fetch user session from Supabase
   const { data: { user } } = await supabase.auth.getUser();
@@ -55,7 +48,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (pathname === '/login' || pathname === '/signup'  && user) {
+  if ((pathname === '/login' || pathname === '/signup') && user) {
     const url = request.nextUrl.clone();
     url.pathname = '/quiz';
     return NextResponse.redirect(url);
