@@ -18,7 +18,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://domain-you-are-embedding-from.com;"
+            value: "frame-ancestors 'self' https://therapy-trainings-quiz-game-psi.vercel.app/quiz"
           },
           {
             key: 'X-Frame-Options',
