@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 0f31e57 (Remove intercom)
 import './globals.css';
 
 import { Analytics } from '@vercel/analytics/react';
