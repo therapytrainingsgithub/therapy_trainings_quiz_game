@@ -18,29 +18,28 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' *;"
+            value: "frame-ancestors 'self' http://therapy-trainings-quiz-game-psi.vercel.app/quiz;"
           },
           {
             key: 'X-Frame-Options',
-            value: 'ALLOWALL'
+            value: 'ALLOW-FROM http://therapy-trainings-quiz-game-psi.vercel.app/quiz'
           },
           {
             key: 'Cache-Control',
-            value: 'no-cache, no-store, must-revalidate' // Prevents caching
+            value: 'no-cache, no-store, must-revalidate'
           },
           {
             key: 'Pragma',
-            value: 'no-cache' // HTTP 1.0 backward compatibility
+            value: 'no-cache'
           },
           {
             key: 'Expires',
-            value: '0' // Proxies
+            value: '0'
           }
         ]
       }
     ];
   }
-  
 };
 
 module.exports = nextConfig;
