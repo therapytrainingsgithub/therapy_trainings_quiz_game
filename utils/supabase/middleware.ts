@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request
@@ -18,17 +19,16 @@ export async function updateSession(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          options = {
-            ...options,
-            sameSite: 'none',  // Must be lowercase
-            secure: true,      // Required with SameSite=None
-          };
-          supabaseResponse.cookies.set(name, value, options); // Set cookie on response
+        cookiesToSet.forEach(({ name, value, options }) =>
+          request.cookies.set(name, value)
+        );
+        supabaseResponse = NextResponse.next({
+          request
         });
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, options)
+        );
       }
-      
-      
     }
   });
 
@@ -55,8 +55,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect logged-in users away from login/signup page to "/quiz"
-  if ((pathname === '/login' || pathname === '/signup') && user) {
+  if (pathname === '/login' || pathname === '/signup'  && user) {
     const url = request.nextUrl.clone();
     url.pathname = '/quiz';
     return NextResponse.redirect(url);
