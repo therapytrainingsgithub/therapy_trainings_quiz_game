@@ -1125,8 +1125,8 @@ if (!isQuizStarted) {
 
 if (hasWonGame) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F5] overflow-x-hidden">  {/* Prevent horizontal scrolling */}
-      <Card className="w-full max-w-md sm:max-w-2xl p-4 sm:p-8 bg-white rounded-lg shadow-lg text-center"> {/* Added max-w-md for mobile */}
+    <div className="flex flex-col py-6 items-center justify-center min-h-screen bg-[#F5F5F5] overflow-x-hidden">  {/* Prevent horizontal scrolling */}
+      <Card className="w-full max-w-md sm:max-w-2xl  sm:p-8 bg-white rounded-lg shadow-lg text-center"> {/* Added max-w-md for mobile */}
         
        
         <p className="text-gray-800 text-lg mb-4 font-bold">
