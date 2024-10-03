@@ -1,3 +1,4 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -10,25 +11,7 @@ const nextConfig = {
         hostname: '*.public.blob.vercel-storage.com'
       }
     ]
-  },
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' *;"
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'ALLOWALL' // Allows your app to be embedded in an iframe
-          }
-        ]
-      }
-    ];
   }
-  
 };
 
 module.exports = nextConfig;
