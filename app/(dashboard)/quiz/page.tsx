@@ -1128,8 +1128,7 @@ if (hasWonGame) {
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F5] overflow-x-hidden">  {/* Prevent horizontal scrolling */}
       <Card className="w-full max-w-md sm:max-w-2xl p-4 sm:p-8 bg-white rounded-lg shadow-lg text-center"> {/* Added max-w-md for mobile */}
         
-        {/* Game Over, Explanation, and Buttons */}
-        {/* <div className="text-2xl font-bold text-gray-800 mb-4">Game Over</div> */}
+       
         <p className="text-gray-800 text-lg mb-4 font-bold">
           Congratulations , you have completed all 10 rounds.
         </p>
@@ -1183,10 +1182,9 @@ if (isGameOver) {
 
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F5] overflow-x-hidden">  {/* Prevent horizontal scrolling */}
-      <Card className="w-full max-w-md sm:max-w-2xl p-4 sm:p-8 bg-white rounded-lg shadow-lg text-center mt-4"> {/* Added max-w-md for mobile */}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F5] overflow-x-hidden  py-6">  {/* Prevent horizontal scrolling */}
+      <Card className=" w-full max-w-md sm:max-w-2xl sm:p-8 bg-white rounded-lg shadow-lg text-center"> {/* Added max-w-md for mobile */}
         
-        {/* Game Over, Explanation, and Buttons */}
         <div className="text-2xl font-bold text-gray-800 mb-4">Game Over</div>
         <p className="text-red-500 text-lg mb-4 font-bold">
           {explanation}
