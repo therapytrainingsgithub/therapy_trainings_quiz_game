@@ -1,10 +1,12 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0f31e57 (Remove intercom)
 import './globals.css';
 
 import { Analytics } from '@vercel/analytics/react';
 import { UserContextProvider } from '@/lib/userContext';
 
-import Script from 'next/script';
 export const metadata = {
   title: 'Quiz Game',
   description: 'An quiz game app as an extension of Therapy Training.'

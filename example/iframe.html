@@ -1,0 +1,60 @@
+
+<div id="iframeContainer">
+    <iframe 
+      id="quiz_game_Iframe" 
+      src="http://localhost:3000/quiz" 
+      scrolling="yes"
+
+      loading="lazy">
+    </iframe>
+  </div>
+  
+  <style>
+  #iframeContainer {
+      position: fixed;
+      right: 0;
+      bottom: 20px;
+      z-index: 100;
+      width: 900px;
+      height: 850px;
+      max-width: 100%;
+      max-height: 100%;
+      box-sizing: border-box;
+      border-radius: 10px;
+      overflow: hidden; /* Ensure content stays within the bounds */
+  }
+  
+  #quiz_game_Iframe {
+      border: 0;
+      box-shadow: none;
+      width: 100%;
+      height: 100%;
+  }
+  
+  @media (max-width: 1024px) {
+      #iframeContainer {
+          width: 700px;
+          height: 650px;
+      }
+  }
+  
+  @media (max-width: 768px) {
+      #iframeContainer {
+          width: 90%;
+          height: 80vh;
+          right: 5%;
+          bottom: 10px;
+      }
+  }
+  
+  @media (max-width: 480px) {
+      #iframeContainer {
+          width: 100%;
+          height: 90vh;
+          right: 0;
+          bottom: 5px;
+          border-radius: 0;
+      }
+  }
+  </style>
+  
