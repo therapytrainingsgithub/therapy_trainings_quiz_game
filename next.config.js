@@ -1,17 +1,19 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  images: {
-    remotePatterns: [
+module.exports = {
+  async headers() {
+    return [
       {
-        protocol: 'https',
-        hostname: 'avatars.githubusercontent.com'
-      },
-      {
-        protocol: 'https',
-        hostname: '*.public.blob.vercel-storage.com'
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*' // Allow any origin to embed your app
+          },
+          {
+            key: 'Access-Control-Allow-Credentials',
+            value: 'true' // Allow credentials (cookies) to be sent
+          }
+        ]
       }
     ]
   }
 };
-
-module.exports = nextConfig;
