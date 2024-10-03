@@ -1,9 +1,6 @@
 {
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": []
-    }
+  "routes": [
+    { "src": "/about", "dest": "/about.html" },
+    { "src": "/api/(.*)", "dest": "/api/$1" }
   ]
 }
-
