@@ -35,7 +35,7 @@ function ForgotPasswordForm() {
 
       if (updateError) {
         toast.error(updateError.message);
-        setLoading(false);
+        setLoading(false)
       } else {
         toast.success('Password reset successfully!');
         setLoading(false);
