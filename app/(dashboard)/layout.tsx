@@ -45,7 +45,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <Providers>
       <BreadcrumbProvider>
-        <main className="flex min-h-screen w-full flex-col bg-[#F5F5F5]">
+        <main className="flex min-h-screen w-full flex-col justify-between bg-[#F5F5F5]">
           {/* <DesktopNav /> */}
           <div className="flex flex-col ">
             <header className="sticky top-0 z-30 flex h-20 items-center justify-between bg-white px-8 sm:static sm:h-auto sm:bg-white">
@@ -61,11 +61,10 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
               </div>
               <User />
             </header>
-            <main className="grid flex-1 items-start gap-2 p-4 sm:px-6 sm:py-0 md:gap-4">
+            <main className="h-full  grid flex-1 items-start gap-2 p-4 sm:px-6 sm:py-0 md:gap-4">
               {children}
             </main>
           </div>
-          <Analytics />
           <div className="w-full bg-[#709D50] text-white py-4 text-center " style={{ overflowX: 'hidden' }}>
         <p className="text-sm">© 2024 Therapy Trainings. All rights reserved.</p>
       </div>

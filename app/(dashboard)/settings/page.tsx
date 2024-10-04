@@ -169,10 +169,13 @@ const SettingsPage = () => {
 
   return (
     <>
-      <Card style={{ borderTop: 'none', marginTop: 20 }}>
+
+      <div className='  justify-center'>
+
+      <Card  style={{ borderTop: 'none', marginTop: 20 }}>
         <CardHeader>
-          <CardTitle>Account Settings</CardTitle>
-          <CardDescription>Update your account settings.</CardDescription>
+          <CardTitle  >Account Settings</CardTitle>
+          <CardDescription >Update your account settings.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -237,6 +240,7 @@ const SettingsPage = () => {
         </CardContent>
         <CardFooter />
       </Card>
+      </div>
     </>
   );
 };
