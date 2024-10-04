@@ -15,8 +15,8 @@ export default function ForgotPasswordPage() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    
-    // Check if the passwords match
+
+    // Check if passwords match
     if (newPassword !== confirmPassword) {
       toast.error('Passwords do not match');
       return;
@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
     try {
       const supabase = createClient();
 
-      // Update the password without the access token, Supabase handles this after user clicks the reset link
+      // Update the password directly without passing a token
       const { error } = await supabase.auth.updateUser({
         password: newPassword,
       });
@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="h-[100vh] flex flex-col justify-center items-center p-4">
       <h1 className="text-2xl font-bold mb-6">Reset Password</h1>
-      
+
       <form onSubmit={handleSubmit} className="w-full max-w-md flex flex-col gap-4">
         <div>
           <label htmlFor="new-password" className="block mb-2">New Password:</label>

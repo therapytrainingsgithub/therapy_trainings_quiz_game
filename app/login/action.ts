@@ -46,7 +46,7 @@ export async function signup(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/verify-email`, // Redirect after email confirmation
+      emailRedirectTo: '/login', // Redirect after email confirmation to verify-email
       data: {
         username, // Store username in user_metadata (optional)
       },
@@ -95,7 +95,6 @@ export async function signup(formData: FormData) {
   return { data: loginData };
 }
 
-
 export async function forgotPassword(email: string) {
   const supabase = createClient();
 
@@ -116,7 +115,7 @@ export async function forgotPassword(email: string) {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/forgot-password`, // Use the full URL to the forgot-password page
+    redirectTo: '/forgot-password', // Correct relative path to the forgot-password page
   });
 
   if (error) {
