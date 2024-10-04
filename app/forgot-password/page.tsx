@@ -1,19 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'; // Import for reading URL params
 import { createClient } from 'utils/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'react-hot-toast';
 
-export default function ForgotPasswordPage() {
+// ForgotPasswordForm component
+function ForgotPasswordForm() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams(); // Used to get the access_token from the URL
   const router = useRouter();
 
+  // Function to handle the password reset submission
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -105,5 +107,14 @@ export default function ForgotPasswordPage() {
         </Button>
       </form>
     </div>
+  );
+}
+
+// ForgotPasswordPage component wrapped in Suspense
+export default function ForgotPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ForgotPasswordForm />
+    </Suspense>
   );
 }
