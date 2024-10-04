@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation'; // Import for reading URL params
+import { Suspense, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { createClient } from 'utils/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,9 +11,9 @@ function ForgotPasswordForm() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const searchParams = useSearchParams(); // Used to get the access_token from the URL
   const router = useRouter();
 
+  // Function to handle the password reset submission
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -23,37 +23,14 @@ function ForgotPasswordForm() {
       return;
     }
 
-    // Get the access_token and email from the URL
-    const accessToken = searchParams.get('access_token');
-    const email = searchParams.get('email');
-
-    if (!accessToken || !email) {
-      toast.error('Reset token or email is missing in the URL');
-      setLoading(false);
-      return;
-    }
-
     setLoading(true);
 
     try {
       const supabase = createClient();
 
-      // Verify the OTP (the reset token sent to the user)
-      const { error: otpError } = await supabase.auth.verifyOtp({
-        token: accessToken,
-        type: 'recovery',
-        email: email,
-      });
-
-      if (otpError) {
-        toast.error(otpError.message);
-        setLoading(false);
-        return;
-      }
-
-      // Once OTP is verified, update the user's password
+      // Update the user's password directly
       const { error: updateError } = await supabase.auth.updateUser({
-        password: newPassword,
+        password: newPassword, // Set the new password
       });
 
       if (updateError) {
