@@ -45,7 +45,6 @@ export default function LoginPage() {
           background: "#48bb78", // Success background color (green)
           color: "#fff", // Text color
         },
-         // Pause when hovered
       });
 
       // Set the ref to true to prevent multiple toasts
@@ -69,7 +68,6 @@ export default function LoginPage() {
           background: "#f56565", // Error background color (red)
           color: "#fff",
         },
-        
       }); // Show error message using toast
     } else if (result?.data) {
       toast.success("Logged in successfully!", {
@@ -79,7 +77,6 @@ export default function LoginPage() {
           background: "#48bb78",
           color: "#fff",
         },
-        
       }); // Show success message using toast
       router.push('/quiz'); // Redirect to quiz page after login
     }
@@ -95,7 +92,6 @@ export default function LoginPage() {
           background: "#f56565",
           color: "#fff",
         },
-        
       }); // Show error if email is empty
       return;
     }
@@ -111,7 +107,6 @@ export default function LoginPage() {
           background: "#f56565",
           color: "#fff",
         },
-        
       }); // Show error using toast
       setLoading(false);
     } else {
@@ -122,8 +117,7 @@ export default function LoginPage() {
           background: "#48bb78",
           color: "#fff",
         },
-        
-      }); 
+      });
       setLoading(false);
     }
   };
