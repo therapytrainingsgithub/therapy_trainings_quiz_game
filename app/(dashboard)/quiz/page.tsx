@@ -986,12 +986,16 @@ const renderLeaderboard = () => {
           )}
 
           {showAllScores && (
+            <div className=' text-right'>
+
             <button
               onClick={() => setShowAllScores(false)}
               className="mt-4 text-green-600 text-lg underline "
             >
+
               Hide All Scores &larr;
             </button>
+            </div>
           )}
         </div>
       ) : (

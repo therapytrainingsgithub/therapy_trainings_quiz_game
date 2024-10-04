@@ -1,19 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from 'utils/supabase/client';
-import { login } from './action';
+import { login, forgotPassword } from './action';
 import { Button } from '@/components/ui/button';
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import Image from 'next/image';
+import { toast } from 'react-hot-toast'; // Import react-hot-toast
 
 export default function LoginPage() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>(''); // Using the same email for login and forgot password
+  const toastShownRef = useRef(false); // Ref to track if the toast has been shown
 
   // Check if the user is already logged in and redirect if so
   useEffect(() => {
@@ -29,6 +32,28 @@ export default function LoginPage() {
     checkSession();
   }, [router]);
 
+  // Check if redirected from signup page and show success message as toast (only once)
+  useEffect(() => {
+    const signupSuccess = searchParams.get('signup');
+
+    // Only show the toast once
+    if (signupSuccess === 'success' && !toastShownRef.current) {
+      toast.success("Thank you for registering! Please check your email to confirm your address and activate your account.", {
+        position: "top-right",
+        duration: 4000,
+        style: {
+          background: "#48bb78", // Success background color (green)
+          color: "#fff", // Text color
+        },
+         // Pause when hovered
+      });
+
+      // Set the ref to true to prevent multiple toasts
+      toastShownRef.current = true;
+    }
+  }, [searchParams]);
+
+  // Handle login form submission
   const handleSubmit = async (event: React.FormEvent) => {
     setLoading(true);
     event.preventDefault();
@@ -37,17 +62,74 @@ export default function LoginPage() {
     const result = await login(formData);
     if (result?.error) {
       setLoading(false);
-      setError(result.error);
+      toast.error(result.error, {
+        position: "top-right",
+        duration: 4000,
+        style: {
+          background: "#f56565", // Error background color (red)
+          color: "#fff",
+        },
+        
+      }); // Show error message using toast
     } else if (result?.data) {
-      setError(null);
+      toast.success("Logged in successfully!", {
+        position: "top-right",
+        duration: 4000,
+        style: {
+          background: "#48bb78",
+          color: "#fff",
+        },
+        
+      }); // Show success message using toast
       router.push('/quiz'); // Redirect to quiz page after login
     }
   };
 
+  // Handle forgot password form submission, using the same email
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error("Please enter your email address first.", {
+        position: "top-right",
+        duration: 4000,
+        style: {
+          background: "#f56565",
+          color: "#fff",
+        },
+        
+      }); // Show error if email is empty
+      return;
+    }
+
+    setLoading(true);
+
+    const result = await forgotPassword(email);
+    if (result?.error) {
+      toast.error(result.error, {
+        position: "top-right",
+        duration: 4000,
+        style: {
+          background: "#f56565",
+          color: "#fff",
+        },
+        
+      }); // Show error using toast
+      setLoading(false);
+    } else {
+      toast.success("Reset Password Link has been sent to your email.", {
+        position: "top-right",
+        duration: 4000,
+        style: {
+          background: "#48bb78",
+          color: "#fff",
+        },
+        
+      }); 
+      setLoading(false);
+    }
+  };
+
   return (
-    <div
-      className="h-[100vh] flex flex-col justify-center items-center p-4 overflow-y-null" // Prevent scrolling on mobile
-    >
+    <div className="h-[100vh] flex flex-col justify-center items-center p-4 overflow-y-null">
       {/* Add logo outside the box */}
       <Image
         src="/logo.png"
@@ -56,6 +138,9 @@ export default function LoginPage() {
         height={80}
         className="mb-8"
       />
+      <h1 className="text-[#191919] text-[22px] sm:text-[28px] font-roboto font-bold mb-8 leading-none">
+        Therapy Trainings™ Diagnostic Challenge
+      </h1>
 
       {/* The login box */}
       <Card className="w-full max-w-sm p-4 flex-grow-0">
@@ -75,6 +160,8 @@ export default function LoginPage() {
                 type="email"
                 id="email"
                 name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)} // Capture email for both login and reset
                 className="w-full"
                 required
               />
@@ -90,6 +177,12 @@ export default function LoginPage() {
                 className="w-full"
                 required
               />
+              <p
+                onClick={handleForgotPassword} // Call reset password directly
+                className="mt-2 text-left text-sm text-blue-600 cursor-pointer"
+              >
+                Forgot your password?
+              </p>
             </div>
             <Button
               loading={loading}
@@ -104,10 +197,6 @@ export default function LoginPage() {
                 Don't have an account? Sign Up.
               </p>
             </Link>
-
-            {error && (
-              <p className="mt-4 text-center text-sm text-red-600">{error}</p>
-            )}
           </form>
         </CardFooter>
       </Card>

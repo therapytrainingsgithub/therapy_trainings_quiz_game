@@ -32,25 +32,32 @@ export default function SignupPage() {
   const handleSubmit = async (event: React.FormEvent) => {
     setLoading(true);
     event.preventDefault();
-
-    // Ensure that username is valid before submitting
+  
     if (username.length > 10) {
       setLoading(false);
       setUsernameError('Username cannot be more than 10 letters.');
       return;
     }
-
+  
     const formData = new FormData(event.target as HTMLFormElement);
-
     const result = await signup(formData);
     if (result?.error) {
+      if (result.error.includes("Email not confirmed")) {
+        router.push('/login?signup=success');
+        setError(null);
+      } else {
+        setError(result.error);
+      }
       setLoading(false);
-      setError(result.error);
-    } else if (result?.data) {
-      setError(null);
-      router.push('/quiz'); // Redirect to quiz page after signup
+    } else {
+      // If no error and data is there, just redirect
+      router.push('/login?signup=success');
+      setLoading(false);
     }
+    
   };
+  
+
 
   return (
     <div
@@ -64,7 +71,9 @@ export default function SignupPage() {
         height={80}
         className="mb-8"
       />
-
+        <h1 className="text-[#191919] text-[22px] sm:text-[28px] font-roboto font-bold mb-8 leading-none">
+          Therapy Trainings™ Diagnostic Challenge
+        </h1>
       {/* The signup box */}
       <Card className="w-full max-w-sm p-4 flex-grow-0">
         <CardHeader>
