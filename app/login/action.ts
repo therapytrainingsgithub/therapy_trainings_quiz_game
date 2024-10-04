@@ -31,7 +31,7 @@ export async function signup(formData: FormData) {
     .from('profiles')
     .select('username')
     .eq('username', username)
-    .single(); // Expect one result or none
+    .single();
 
   if (existingUsername) {
     return { error: 'Username already taken, please try another one' };
@@ -46,7 +46,7 @@ export async function signup(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: '/login', // Redirect after email confirmation to verify-email
+      emailRedirectTo: 'https://quiz.therapytrainings.com/verify-email', // Correct URL for the live domain
       data: {
         username, // Store username in user_metadata (optional)
       },
@@ -57,55 +57,40 @@ export async function signup(formData: FormData) {
     return { error: signupError.message };
   }
 
-  // Check if signupData.user is not null
   if (!signupData || !signupData.user) {
     return { error: 'An error occurred during signup. No user data returned.' };
   }
 
-  // Attempt to insert both email and username into the profiles table
+  // Insert email and username into profiles table
   try {
     const { error: profileError } = await supabase
       .from('profiles')
       .insert({
-        id: signupData.user.id, // Link the new profile to the auth.users ID
+        id: signupData.user.id, 
         username: username,
-        email: email, // Store email along with the username in the profiles table
+        email: email,
       });
 
     if (profileError) {
-      console.error('Error inserting profile:', profileError.message);
       return { error: 'An error occurred while creating the user profile' };
     }
   } catch (err) {
-    console.error('Unexpected error:', err);
     return { error: 'An unexpected error occurred while creating the user profile' };
   }
 
-  console.log('Signup successful, attempting login...');
-
-  // Automatically log the user in after signup
-  const { error: loginError, data: loginData } = await supabase.auth.signInWithPassword({ email, password });
-  
-  if (loginError) {
-    return { error: loginError.message };
-  }
-
-  console.log('Login after signup successful:', loginData);
-
-  return { data: loginData };
+  return { data: signupData };
 }
+
 
 export async function forgotPassword(email: string) {
   const supabase = createClient();
 
-  // Check if the email exists in the profiles table
   const { data: userProfile, error: profileError } = await supabase
     .from('profiles')
     .select('email')
     .eq('email', email)
-    .single(); // Fetch the user profile for the given email
+    .single();
 
-  // If no user profile is found, return an error
   if (!userProfile) {
     return { error: 'No account found with this email address.' };
   }
@@ -115,7 +100,7 @@ export async function forgotPassword(email: string) {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: '/forgot-password', // Correct relative path to the forgot-password page
+    redirectTo: 'https://quiz.therapytrainings.com/forgot-password', // Correct URL for the live domain
   });
 
   if (error) {
@@ -124,3 +109,4 @@ export async function forgotPassword(email: string) {
 
   return { data: "Reset password link has been sent to your email." };
 }
+
