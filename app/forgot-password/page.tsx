@@ -1,13 +1,12 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation'; // Import for reading URL params
 import { createClient } from 'utils/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'react-hot-toast';
 
-// ForgotPasswordForm component
 function ForgotPasswordForm() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -15,7 +14,6 @@ function ForgotPasswordForm() {
   const searchParams = useSearchParams(); // Used to get the access_token from the URL
   const router = useRouter();
 
-  // Function to handle the password reset submission
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -28,6 +26,7 @@ function ForgotPasswordForm() {
     // Get the access_token and email from the URL
     const accessToken = searchParams.get('access_token');
     const email = searchParams.get('email');
+
     if (!accessToken || !email) {
       toast.error('Reset token or email is missing in the URL');
       setLoading(false);
@@ -39,11 +38,11 @@ function ForgotPasswordForm() {
     try {
       const supabase = createClient();
 
-      // Verify the OTP (reset token) along with email
+      // Verify the OTP (the reset token sent to the user)
       const { error: otpError } = await supabase.auth.verifyOtp({
-        email,               // email extracted from the URL
-        token: accessToken,   // token sent via email
-        type: 'recovery',     // Specify 'recovery' type for password reset
+        token: accessToken,
+        type: 'recovery',
+        email: email,
       });
 
       if (otpError) {
@@ -110,7 +109,7 @@ function ForgotPasswordForm() {
   );
 }
 
-// ForgotPasswordPage component wrapped in Suspense
+// Wrap in Suspense for SSR compatibility
 export default function ForgotPasswordPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
