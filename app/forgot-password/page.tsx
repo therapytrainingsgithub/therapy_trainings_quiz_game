@@ -1,7 +1,7 @@
-'use client';
+'use client'; // Ensure this page runs as a client component
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation'; // client-side routing and search params
 import { createClient } from 'utils/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,7 @@ export default function ForgotPasswordPage() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const searchParams = useSearchParams(); // To capture the token from the URL
+  const searchParams = useSearchParams(); // Client-side params
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
         return;
       }
 
-      // Step 1: Verify the OTP (the reset token in the URL)
+      // Step 1: Verify the OTP (reset token in the URL)
       const { error: otpError } = await supabase.auth.verifyOtp({
         email: email, // User's email
         token: accessToken, // Token sent in the reset email
@@ -71,40 +71,42 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="h-[100vh] flex flex-col justify-center items-center p-4">
-      <h1 className="text-2xl font-bold mb-6">Reset Password</h1>
+    <Suspense fallback={<p>Loading...</p>}> {/* Wrap the component in Suspense */}
+      <div className="h-[100vh] flex flex-col justify-center items-center p-4">
+        <h1 className="text-2xl font-bold mb-6">Reset Password</h1>
 
-      <form onSubmit={handleSubmit} className="w-full max-w-md flex flex-col gap-4">
-        <div>
-          <label htmlFor="new-password" className="block mb-2">New Password:</label>
-          <Input
-            type="password"
-            id="new-password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="w-full max-w-md flex flex-col gap-4">
+          <div>
+            <label htmlFor="new-password" className="block mb-2">New Password:</label>
+            <Input
+              type="password"
+              id="new-password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        <div>
-          <label htmlFor="confirm-password" className="block mb-2">Confirm Password:</label>
-          <Input
-            type="password"
-            id="confirm-password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-        </div>
+          <div>
+            <label htmlFor="confirm-password" className="block mb-2">Confirm Password:</label>
+            <Input
+              type="password"
+              id="confirm-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        <Button
-          type="submit"
-          loading={loading}
-          className="bg-[#709D51] hover:bg-[#50822D] w-full"
-        >
-          Reset Password
-        </Button>
-      </form>
-    </div>
+          <Button
+            type="submit"
+            loading={loading}
+            className="bg-[#709D51] hover:bg-[#50822D] w-full"
+          >
+            Reset Password
+          </Button>
+        </form>
+      </div>
+    </Suspense>
   );
 }
