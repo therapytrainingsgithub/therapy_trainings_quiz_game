@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from 'utils/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,7 @@ export default function ForgotPasswordPage() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams(); // To capture the token from the URL
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -27,13 +28,36 @@ export default function ForgotPasswordPage() {
     try {
       const supabase = createClient();
 
-      // Update the password directly without passing a token
-      const { error } = await supabase.auth.updateUser({
+      // Get the reset token and email from the URL
+      const accessToken = searchParams.get('access_token');
+      const email = searchParams.get('email');
+
+      if (!accessToken || !email) {
+        toast.error('Reset token or email is missing in the URL');
+        setLoading(false);
+        return;
+      }
+
+      // Step 1: Verify the OTP (the reset token in the URL)
+      const { error: otpError } = await supabase.auth.verifyOtp({
+        email: email, // User's email
+        token: accessToken, // Token sent in the reset email
+        type: 'recovery', // Specify the type as 'recovery' for password reset
+      });
+
+      if (otpError) {
+        toast.error(otpError.message);
+        setLoading(false);
+        return;
+      }
+
+      // Step 2: Update the user's password after OTP verification
+      const { error: updateError } = await supabase.auth.updateUser({
         password: newPassword,
       });
 
-      if (error) {
-        toast.error(error.message);
+      if (updateError) {
+        toast.error(updateError.message);
         setLoading(false);
       } else {
         toast.success('Password reset successfully!');
