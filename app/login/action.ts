@@ -46,7 +46,7 @@ export async function signup(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: 'https://quiz.therapytrainings.com/verify-email', // Correct URL for the live domain
+      emailRedirectTo: '/login', // Correct URL for the live domain
       data: {
         username, // Store username in user_metadata (optional)
       },
@@ -60,8 +60,6 @@ export async function signup(formData: FormData) {
   if (!signupData || !signupData.user) {
     return { error: 'An error occurred during signup. No user data returned.' };
   }
-
-  // Insert email and username into profiles table
   try {
     const { error: profileError } = await supabase
       .from('profiles')
@@ -100,7 +98,7 @@ export async function forgotPassword(email: string) {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: 'https://quiz.therapytrainings.com/forgot-password', // Correct URL for the live domain
+    redirectTo: '/forgot-password', // Correct URL for the live domain
   });
 
   if (error) {
