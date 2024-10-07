@@ -35,22 +35,23 @@ function LoginForm() {
   // Check if redirected from signup page and show success message as toast (only once)
   useEffect(() => {
     const signupSuccess = searchParams.get('signup');
-
+  
     // Only show the toast once
     if (signupSuccess === 'success' && !toastShownRef.current) {
       toast.success("Thank you for registering! Please check your email to confirm your address and activate your account.", {
         position: "top-right",
-        duration: 4000,
+        duration: 60000, // Display the toast for 60 seconds (60000ms)
         style: {
           background: "#48bb78", // Success background color (green)
           color: "#fff", // Text color
         },
       });
-
+  
       // Set the ref to true to prevent multiple toasts
       toastShownRef.current = true;
     }
   }, [searchParams]);
+  
 
   // Handle login form submission
   const handleSubmit = async (event: React.FormEvent) => {
