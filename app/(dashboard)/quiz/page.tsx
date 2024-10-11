@@ -1,10 +1,12 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import Confetti from 'react-confetti';
 import { createClient } from 'utils/supabase/client';
+import { toast } from 'react-hot-toast'; // Import react-hot-toast
 
 const Loader = () => (
   <svg
@@ -47,14 +49,6 @@ interface LeaderboardEntry {
   timestamp: string; // Add timestamp as a string (ISO date format)
 }
 
-function shuffleArray(array: Question[]): Question[] {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
 function selectRandomElements(array: Question[], count: number): Question[] {
   const selected: Question[] = [];
   const usedIndices = new Set<number>();
@@ -89,7 +83,7 @@ export default function QuizPage() {
   const [question, setQuestion] = useState('');
   const [options, setOptions] = useState<string[]>([]);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-
+  const [tempUsername, setTempUsername] = useState(''); // Temporary username before blur
   const [TimeEnd, setTimeEnd]=useState(false);
   const [remainingPoints, setRemainingPoints] = useState(1000);
   const [score, setScore] = useState(0);
@@ -99,21 +93,22 @@ export default function QuizPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isAnswerSelected, setIsAnswerSelected] = useState(false);
-  const [showAudiencePoll, setShowAudiencePoll] = useState(false);
+  const [showAudiencePoll, setShowAudiencePoll] = useState(false);  
+  const [isUsernameEntered, setIsUsernameEntered] = useState(false);
+
   const [audiencePollResults, setAudiencePollResults] = useState<number[]>([]);
   const [lifelineUsed, setLifelineUsed] = useState({ poll: false, phone: false, fiftyFifty: false });
   const [fiftyFiftyOptions, setFiftyFiftyOptions] = useState<number[]>([]);
   const [phoneFriendResponse, setPhoneFriendResponse] = useState<string | null>(null);
   const [isRoundCompleted, setIsRoundCompleted] = useState(false);
   const [showScore, setShowScore] = useState(true); // Initialize showScore state
-  const [existingRound, setExistingRound] = useState<number | null>(null);
-  const [overwrite, setOverwrite] = useState(false);
+
   const [mode, setMode] = useState<'classic' | 'advanced' | null>(null);
   const [classicTimer, setClassicTimer] = useState(30); 
   const [advancedTimer, setAdvancedTimer] = useState(20); 
   const supabase = createClient(); // Initialize Supabase client
-  const [showNoSaveDialog, setShowNoSaveDialog] = useState(false);
-  const [showResumeDialog, setShowResumeDialog] = useState(false);
+
+  const inputRef = useRef<HTMLInputElement>(null); // Specify HTMLInputElement type for the ref
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -122,42 +117,27 @@ export default function QuizPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const [loadingUsername, setLoadingUsername] = useState(true); // Track loading state for username
+  useEffect(() => {
+    // Load username from localStorage on mount
+    const savedUsername = localStorage.getItem('username');
+    if (savedUsername) {
+      setUsername(savedUsername); // Set the initial username from localStorage
+    }
+  }, []);
   
-  const fetchUserData = async () => {
-    try {
-      setLoadingUsername(true); // Start loading
-      const { data: authData, error: authError } = await supabase.auth.getUser();
-
-      if (authError || !authData?.user) {
-        console.error('Error fetching user:', authError);
-        return;
+  const handleUsernameBlur = () => {
+    if (inputRef.current) { // Check if inputRef.current is not null
+      const inputValue = inputRef.current.value.trim(); // Get the current value of the input
+      if (inputValue) {
+        setUsername(inputValue); // Finalize the username when the input loses focus
+        localStorage.setItem('username', inputValue); // Save to localStorage
+      } else {
+        setUsername(''); // Clear the username if empty
+        localStorage.removeItem('username'); // Remove it from localStorage
       }
-
-      const userId = authData.user.id;
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', userId)
-        .single();
-
-      if (profileError || !profileData) {
-        console.error('Error fetching profile data:', profileError);
-        return;
-      }
-
-      // Set the fetched username from the profiles table
-      setUsername(profileData.username);
-    } catch (err) {
-      console.error('Error fetching user data:', err);
-    } finally {
-      setLoadingUsername(false); // End loading
     }
   };
-
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+  
 
 
   useEffect(() => {
@@ -480,8 +460,8 @@ const handleGameEndd = async (shouldUpdateLeaderboard: boolean = true) => {
     setQuestions([]);
     setExplanation('');
     setScore(0);
-    setClassicTimer(30); // Reset Classic Mode timer
-    setAdvancedTimer(20); // Reset Advanced Mode timer
+    setClassicTimer(30); 
+    setAdvancedTimer(20); 
     setRemainingPoints(1000);
     setShowScore(true);
     setIsAnswerSelected(false);
@@ -505,8 +485,8 @@ const handleGameEndd = async (shouldUpdateLeaderboard: boolean = true) => {
     setQuestions([]);
     setExplanation('');
     setScore(0);
-    setClassicTimer(30); // Reset Classic Mode timer
-    setAdvancedTimer(20); // Reset Advanced Mode timer
+    setClassicTimer(30); 
+    setAdvancedTimer(20); 
     setRemainingPoints(1000);
     setShowScore(true);
     setIsAnswerSelected(false);
@@ -529,6 +509,10 @@ const handleGameEndd = async (shouldUpdateLeaderboard: boolean = true) => {
 
   
   const startQuiz = (mode: 'classic' | 'advanced') => {
+    if (!username.trim()) {
+      toast.error('Please enter a username to start the game.');
+      return;
+    }
     setIsQuizStarted(true);
     setIsGameOver(false);
     setScore(0);
@@ -762,7 +746,17 @@ if (!isQuizStarted) {
         )}
   
         <div className="flex flex-col space-y-3 max-w-xs mx-auto">
+        <Input
+              ref={inputRef} // Use ref instead of state to control the input value
+              type="text"
+              defaultValue={username} // Set the default value to what is stored in the state
+              // value={tempUsername}
+              // onChange={handleUsernameChange}
+              onBlur={handleUsernameBlur} // Save username when exiting the input field
+              placeholder="Enter your username" // Save username when exiting the input field
 
+                // className="p-2 border rounded-lg text-gray-700"
+              />
           <Button
             onClick={() => startQuiz('classic')}
             className="w-full bg-[#709D50] text-[#FFFFFF] py-2 text-[12px] sm:text-[14px] font-roboto hover:bg-[#4C6A36] transition duration-150"
