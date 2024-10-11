@@ -258,7 +258,7 @@ const loadNewQuestion = (index: number, questionsList: Question[]) => {
   }
   
   const nextQuestion = questionsList[index];
-  console.log(`Loading question ${index + 1}: Difficulty - ${nextQuestion.difficulty}`); 
+  // console.log(`Loading question ${index + 1}: Difficulty - ${nextQuestion.difficulty}`); 
   setCurrentQuestionIndex(index);
   setQuestion(nextQuestion.question);
   setOptions(nextQuestion.options);
@@ -278,7 +278,8 @@ const loadNewQuestion = (index: number, questionsList: Question[]) => {
   }
 
   setRemainingPoints(1000);
-  console.log(`Question ${index + 1} loaded: ${nextQuestion.question}`);
+  console.log(`Question ${index + 1}  loaded: `)
+  console.log(`${nextQuestion.question}`);
 };
 
 
@@ -587,10 +588,9 @@ const handleGameEndd = async (shouldUpdateLeaderboard: boolean = true) => {
           </p>
   
           {/* Buttons */}
-          <div className="flex flex-col md:flex-col justify-center space-y-2 md:space-x-4 mt-6">
+          <div className="flex flex-col md:flex-row justify-center space-y-2 md:space-y-0 md:space-x-4 mt-6">
             
 
-          <div>
           <Button
               onClick={handleNextRound}
               className="w-full md:w-auto bg-[#709D51] text-white py-2 px-8 text-lg font-bold rounded-lg hover:bg-[#50822D]"
@@ -603,6 +603,7 @@ const handleGameEndd = async (shouldUpdateLeaderboard: boolean = true) => {
             >
               Exit to Menu
             </Button>
+          <div>
           </div>
           </div>
   
