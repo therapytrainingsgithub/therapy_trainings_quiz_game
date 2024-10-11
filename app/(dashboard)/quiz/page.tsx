@@ -1,22 +1,10 @@
 'use client';
-import Confetti from 'react-confetti';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useState, useEffect , useRef} from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import axios from 'axios';
 import { Card } from '@/components/ui/card';
-import { supabase } from '@/lib/db';
+import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
+import Confetti from 'react-confetti';
 import { createClient } from 'utils/supabase/client';
-import { useRouter } from 'next/router';
 
 const Loader = () => (
   <svg
@@ -101,10 +89,8 @@ export default function QuizPage() {
   const [question, setQuestion] = useState('');
   const [options, setOptions] = useState<string[]>([]);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [showSavingDialog, setShowSavingDialog] = useState(false);
-  const [showOverwriteDialog, setShowOverwriteDialog] = useState(false);
+
   const [TimeEnd, setTimeEnd]=useState(false);
-  const [showSaveSuccessDialog, setShowSaveSuccessDialog] = useState(false);
   const [remainingPoints, setRemainingPoints] = useState(1000);
   const [score, setScore] = useState(0);
   const [hasWonGame, setHasWonGame] = useState(false);  // For when the user completes all 10 rounds
@@ -120,10 +106,6 @@ export default function QuizPage() {
   const [phoneFriendResponse, setPhoneFriendResponse] = useState<string | null>(null);
   const [isRoundCompleted, setIsRoundCompleted] = useState(false);
   const [showScore, setShowScore] = useState(true); // Initialize showScore state
-  const [savedGameExists, setSavedGameExists] = useState(false); // For saved game check
-  const [showSavePopup, setShowSavePopup] = useState(false); // Track if the save popup is shown
-  const [showErrorPopup, setShowErrorPopup] = useState(false); // Track if the error popup is shown
-  const [showOverwritePopup, setShowOverwritePopup] = useState(false);
   const [existingRound, setExistingRound] = useState<number | null>(null);
   const [overwrite, setOverwrite] = useState(false);
   const [mode, setMode] = useState<'classic' | 'advanced' | null>(null);
@@ -280,13 +262,7 @@ export default function QuizPage() {
     }
   };
   
-// const renderLoader = () => (
-//   <div className="flex items-center justify-center h-full w-full">
-//     <div className="loader">
-//       <Loader/>
-//     </div>
-//   </div>
-// );
+
 
 const renderLoader = () => (
   <div className="flex items-center justify-center h-screen w-screen">
@@ -478,10 +454,6 @@ const handleGameEndd = async (shouldUpdateLeaderboard: boolean = true) => {
   }
 };
 
-
-  
-  
-  // This function handles the completion of the round
   const showRoundCompletion = (newRound: number) => {
     setRoundWon(newRound);  // Incremented once
     setIsRoundCompleted(true);
@@ -615,190 +587,6 @@ const handleGameEndd = async (shouldUpdateLeaderboard: boolean = true) => {
     console.log('Lifelines Used:', lifelineUsed);
   };
   
-
-  
-  
-
-  
-  const checkSavedProgress = async (name: string) => {
-    try {
-      const response = await axios.get(`/api/resume-progress?name=${name}`);
-      
-      if (response.data.session) {
-        setSavedGameExists(true); // Saved game exists
-      } else {
-        setSavedGameExists(false); // No saved game
-      }
-    } catch (error) {
-      console.error('Error checking saved progress:', error);
-    }
-  };
-  
-  useEffect(() => {
-    const initialize = async () => {
-      await fetchUserData(); // Fetch the user's data (username)
-  
-      if (username) {
-        await checkSavedProgress(username); // Only check progress once username is set
-      }
-    };
-  
-    initialize();
-  }, [username]);
-  const confirmResume = async (confirmed: boolean) => {
-    if (confirmed) {
-      // Restore the game state if the user confirms
-      if (mode === 'classic') {
-        setClassicTimer(30);
-      } else if (mode === 'advanced') {
-        setAdvancedTimer(20);
-      }
-
-      setIsQuizStarted(true);
-      await fetchQuestionsFromDatabase(roundWon + 1); // Pass the correct difficulty/round
-      await deleteSavedGame(username); // Delete the saved game once resumed
-    }
-    setShowResumeDialog(false); // Close the dialog
-  };
-
-  const resumeSavedProgress = async () => {
-    try {
-      setLoading(true); // Show loader while fetching
-      const response = await axios.get(`/api/resume-progress?name=${username}`);
-      setLoading(false); // Hide loader after fetching
-  
-      if (response.status === 200 && response.data.session) {
-        const { score, streak, round, questionIndex, mode } = response.data.session;
-        setScore(score);
-        setStreak(streak);
-        setRoundWon(round);
-        setCurrentQuestionIndex(questionIndex);
-        setDifficulty(difficulty);
-        setMode(mode); // Restore the mode
-  
-        // Show the resume confirmation dialog
-        setExistingRound(round);
-        setShowResumeDialog(true);
-      }
-    } catch (error) {
-      setLoading(false);
-  
-      if (axios.isAxiosError(error)) {
-        // AxiosError type guard
-        if (error.response && error.response.status === 404) {
-          setShowNoSaveDialog(true);
-        } else {
-          console.error('Error resuming saved progress:', error.message);
-        }
-      } else {
-        console.error('An unknown error occurred:', error);
-      }
-    }
-  };
-  
-
-  const deleteSavedGame = async (name: string) => {
-    try {
-      const response = await fetch('/api/delete-saved-game', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        console.log('Game deleted:', result.message);
-      } else {
-        console.error('Error deleting game:', result.error);
-      }
-    } catch (error) {
-      console.error('Error deleting saved game:', error);
-    }
-  };
-
-
-  
-
-  const checkForExistingSaveGame = async () => {
-    try {
-      const response = await axios.post('/api/check-savegame', { name: username });
-      if (response.data.exists) {
-        return { round: response.data.round }; // Actual round data from the save
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error('Error checking for saved game:', error);
-      return null;
-    }
-  };
-
-  const saveGame = async (overwrite: boolean) => {
-    try {
-      await axios.post('/api/savegame', {
-        round: difficulty,
-        name: username,
-        score: score,
-        streak: streak,
-        mode: mode, // Save the mode (either 'classic' or 'advanced')
-        overwrite: overwrite,
-      });
-    } catch (error) {
-      console.error('Error saving game:', error);
-    }
-  };
-  const updateLeaderboardUsername = async (newUsername: string) => {
-    try {
-      setLoading(true); // Show loader during the update
-      const response = await axios.post('/api/update-leaderboard-username', {
-        oldUsername: username,  // Current username
-        newUsername: newUsername,  // New username entered by the user
-      });
-  
-      if (response.status === 200) {
-        setUsername(newUsername); // Update local username
-        alert("Leaderboard updated successfully!");
-      } else {
-        alert("Failed to update leaderboard. Please try again.");
-      }
-    } catch (error) {
-      console.error('Error updating leaderboard:', error);
-      alert('An error occurred while updating the leaderboard.');
-    } finally {
-      setLoading(false); // Stop loader
-    }
-  };
-  
-  /**
-   * Handle saving progress logic
-   */
-  const handleSaveProgress = async () => {
-    setShowSavingDialog(true); // Show the saving dialog
-    const existingSave = await checkForExistingSaveGame(); // Check if a save exists
-    setShowSavingDialog(false); // Hide the saving dialog once the check is done
-
-    if (existingSave) {
-      setExistingRound(existingSave.round); // Set the existing round for the dialog
-      setShowOverwriteDialog(true); // Show the overwrite confirmation dialog
-    } else {
-      // No existing save, proceed to save
-      setShowSavingDialog(true); // Show saving dialog again
-      await saveGame(false); // Save without overwriting
-      setShowSavingDialog(false); // Hide saving dialog after save is done
-      setShowSaveSuccessDialog(true); // Show success dialog
-    }
-  };
-
-  const confirmOverwrite = async (confirmed: boolean) => {
-    setShowOverwriteDialog(false); // Hide the overwrite dialog
-    if (confirmed) {
-      setShowSavingDialog(true); // Show saving dialog again
-      await saveGame(true); // Save with overwrite
-      setShowSavingDialog(false); // Hide saving dialog after save
-      setShowSaveSuccessDialog(true); // Show success dialog
-    }
-  };
-  
   if (isRoundCompleted) {
   return (
         
@@ -817,23 +605,7 @@ const handleGameEndd = async (shouldUpdateLeaderboard: boolean = true) => {
           {/* Buttons */}
           <div className="flex flex-col md:flex-col justify-center space-y-2 md:space-x-4 mt-6">
             
-          <div className='flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4'>
-              {/* Save Progress Button */}
-              <Button
-              onClick={handleSaveProgress}
-              className="w-full md:w-auto bg-[#4C6A36] text-white py-2 px-8 text-lg font-bold rounded-lg hover:bg-[#2C4423]"
-            >
-              Save Progress
-            </Button>
-  
-            {/* Next Round Button */}
-            <Button
-              onClick={handleNextRound}
-              className="w-full md:w-auto bg-[#709D51] text-white py-2 px-8 text-lg font-bold rounded-lg hover:bg-[#50822D]"
-            >
-              Next Round
-            </Button>
-          </div>
+
           <div>
           <Button
               onClick={returnToMenu}
@@ -844,67 +616,10 @@ const handleGameEndd = async (shouldUpdateLeaderboard: boolean = true) => {
           </div>
           </div>
   
-          {/* Overwrite Confirmation Dialog */}
-          <Dialog open={showOverwriteDialog} onOpenChange={setShowOverwriteDialog}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Overwrite Save Game?</DialogTitle>
-                <DialogDescription>
-                  A saved game of round {existingRound} was found. Are you sure you want to overwrite?
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-        <div className="flex row-auto space-x-2">
 
-                
-                <Button
-                  onClick={() => confirmOverwrite(true)}     
-                 className="bg-green-500 text-white py-1 px-3 text-xs sm:text-sm font-bold rounded-md hover:bg-green-600 w-full sm:w-auto"
-
-                >
-                  Yes, Overwrite
-                </Button>
-                <Button
-                  onClick={() => setShowOverwriteDialog(false)}
-                  className="bg-red-500 text-white py-1 px-3 text-xs sm:text-sm font-bold rounded-md hover:bg-red-600 w-full sm:w-auto"
-
-                >
-                  No, Cancel
-                </Button>
-        </div>
-
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
   
           {/* Saving Progress Dialog */}
-          <Dialog open={showSavingDialog} onOpenChange={setShowSavingDialog}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Saving Game</DialogTitle>
-                <DialogDescription>
-                  Saving your progress, please wait...
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
-  
-          {/* Save Success Dialog */}
-          <Dialog open={showSaveSuccessDialog} onOpenChange={setShowSaveSuccessDialog}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Game Saved Successfully!</DialogTitle>
-              </DialogHeader>
-              <DialogFooter>
-                <Button
-                  onClick={() => setShowSaveSuccessDialog(false)}
-                  className="bg-green-500 text-white"
-                >
-                  Close
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+
         </Card>
       </div>
     );
@@ -1047,6 +762,7 @@ if (!isQuizStarted) {
         )}
   
         <div className="flex flex-col space-y-3 max-w-xs mx-auto">
+
           <Button
             onClick={() => startQuiz('classic')}
             className="w-full bg-[#709D50] text-[#FFFFFF] py-2 text-[12px] sm:text-[14px] font-roboto hover:bg-[#4C6A36] transition duration-150"
@@ -1060,65 +776,12 @@ if (!isQuizStarted) {
           >
             Advanced Mode (20s Timer)
           </Button>
+            </div>
+            </div>
+            </div>
   
-          <Button
-            onClick={resumeSavedProgress}
-            className="w-full bg-[#000000] text-white py-2 text-[12px] sm:text-[14px] hover:bg-opacity-90 transition duration-150"
-          >
-            Resume Progress
-          </Button>
-  
-          <div className="">
-  <Dialog open={showResumeDialog} onOpenChange={setShowResumeDialog}>
-    <DialogContent className="px-4 sm:px-8"> {/* Added padding to the dialog content */}
-      <DialogHeader>
-        <DialogTitle>Resume Saved Game?</DialogTitle>
-        <DialogDescription>
-          A saved game of round {existingRound} was found. Do you want to resume your game?
-        </DialogDescription>
-      </DialogHeader>
-      <DialogFooter>
-        <div className="flex row-auto space-x-2">
-          <Button
-            onClick={() => confirmResume(true)}
-            className="bg-green-500 text-white py-1 px-3 text-xs sm:text-sm font-bold rounded-md hover:bg-green-600 w-full sm:w-auto"
-          >
-            Yes, Resume
-          </Button>
-          <Button
-            onClick={() => setShowResumeDialog(false)}
-            className="bg-red-500 text-white py-1 px-3 text-xs sm:text-sm font-bold rounded-md hover:bg-red-600 w-full sm:w-auto"
-          >
-            No, Cancel
-          </Button>
-        </div>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
 
-  <Dialog open={showNoSaveDialog} onOpenChange={setShowNoSaveDialog}>
-    <DialogContent className=" sm:px-8"> 
-      <DialogHeader>
-        <DialogTitle>No Saved Game</DialogTitle>
-        <DialogDescription>
-          No saved game was found for this user. Please start a new game.
-        </DialogDescription>
-      </DialogHeader>
-      <DialogFooter>
-        <Button
-          onClick={() => setShowNoSaveDialog(false)}
-          className="bg-green-500 text-white"
-        >
-          OK
-        </Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
-</div>
 
-        </div>
-      </div>
-    </div>
   
     <div id="leaderboard-section" className="w-full" style={{ overflowX: 'hidden' }}>
       {renderLeaderboard()}

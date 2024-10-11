@@ -12,7 +12,7 @@ export async function updateSession(request: NextRequest) {
     throw new Error('Supabase URL or Key is not defined');
   }
 
-  // Create the Supabase client with cookies handling
+
   const supabase = createServerClient(supabaseUrl, supabaseKey, {
     cookies: {
       getAll() {
@@ -42,31 +42,10 @@ export async function updateSession(request: NextRequest) {
     }
   });
 
-  // Fetch the user session from Supabase
-  const { data: { user } } = await supabase.auth.getUser();
-
   const { pathname } = request.nextUrl;
 
-  // Redirect unauthenticated users to the login page
-  if (!user && !pathname.startsWith('/login') && !pathname.startsWith('/auth')) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    return NextResponse.redirect(url);
-  }
-
-  // Redirect users from "/" to "/quiz" if logged in, otherwise to "/login"
-  if (pathname === '/') {
-    const url = request.nextUrl.clone();
-    if (user) {
-      url.pathname = '/quiz';
-    } else {
-      url.pathname = '/login';
-    }
-    return NextResponse.redirect(url);
-  }
-
-  // Redirect authenticated users from login/signup to quiz
-  if (user && (pathname === '/login' || pathname === '/signup')) {
+  // Redirect any other route to "/quiz"
+  if (pathname !== '/quiz') {
     const url = request.nextUrl.clone();
     url.pathname = '/quiz';
     return NextResponse.redirect(url);
