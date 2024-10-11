@@ -268,7 +268,7 @@ const loadNewQuestion = (index: number, questionsList: Question[]) => {
   setFiftyFiftyOptions([]);
   setPhoneFriendResponse(null);
   // setLifelineUsed({ poll: false, phone: false, fiftyFifty: false });
-  //setLifelineUsed({ poll: false, phone: false, fiftyFifty: false });
+  setLifelineUsed({ poll: false, phone: false, fiftyFifty: false });
   setShowAudiencePoll(false);
 
   if (mode === 'classic') {
