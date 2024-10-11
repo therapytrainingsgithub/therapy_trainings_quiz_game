@@ -745,12 +745,15 @@ if (!isQuizStarted) {
         <p className="text-[#191919] text-[14px] sm:text-[16px] font-roboto mb-4">
           Improve your skills to stay on the leaderboard
         </p>
-  
-        {username && (
-          <h1 className="text-[#191919] text-[22px] sm:text-[28px] font-roboto font-bold mb-2 leading-none">
-            Welcome {username}!
-          </h1>
-        )}
+
+        <div className="min-h-[28px] sm:min-h-[32px]">
+  {username && (
+    <h1 className="text-[#191919] text-[22px] sm:text-[28px] font-roboto font-bold mb-2 leading-none">
+      Welcome {username}!
+    </h1>
+  )}
+</div>
+
   
         <div className="flex flex-col space-y-3 max-w-xs mx-auto">
         <Input
@@ -761,7 +764,7 @@ if (!isQuizStarted) {
               // onChange={handleUsernameChange}
               onBlur={handleUsernameBlur} // Save username when exiting the input field
               placeholder="Enter your username" // Save username when exiting the input field
-
+              className="text-center"
                 // className="p-2 border rounded-lg text-gray-700"
               />
           <Button
