@@ -592,6 +592,12 @@ const handleGameEndd = async (shouldUpdateLeaderboard: boolean = true) => {
 
           <div>
           <Button
+              onClick={handleNextRound}
+              className="w-full md:w-auto bg-[#709D51] text-white py-2 px-8 text-lg font-bold rounded-lg hover:bg-[#50822D]"
+            >
+              Next Round
+            </Button>
+          <Button
               onClick={returnToMenu}
               className="w-full md:w-auto bg-black text-white py-2 px-8 text-lg font-bold rounded-lg hover:bg-[#50822D]"
             >
