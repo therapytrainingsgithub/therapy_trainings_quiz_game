@@ -961,16 +961,29 @@ return (
         </div>
 
         <div className="flex justify-center space-x-10 mt-6">
-          <button onClick={useAudiencePoll} disabled={lifelineUsed.poll}>
-            <img src={lifelineUsed.poll ? "disabled_aud.png" : "poll.png"} alt="Audience Poll" />
-          </button>
-          <button onClick={usePhoneFriend} disabled={lifelineUsed.phone}>
-            <img src={lifelineUsed.phone ? "disabled_phone.png" : "phonee.png"} alt="Phone a Friend" />
-          </button>
-          <button onClick={useFiftyFifty} disabled={lifelineUsed.fiftyFifty}>
-            <img src={lifelineUsed.fiftyFifty ? "disabled_50.png" : "fifty.png"} alt="50:50 Lifeline" />
-          </button>
-        </div>
+  <button onClick={useAudiencePoll} disabled={lifelineUsed.poll}>
+    <img 
+      src={lifelineUsed.poll ? "disabled_aud.png" : "poll.png"} 
+      alt="Audience Poll"
+      className="w-20 h-20 md:w-16 md:h-16" // Smaller on mobile (w-10 h-10), larger on larger screens (md:w-16 md:h-16)
+    />
+  </button>
+  <button onClick={usePhoneFriend} disabled={lifelineUsed.phone}>
+    <img 
+      src={lifelineUsed.phone ? "disabled_phone.png" : "phonee.png"} 
+      alt="Phone a Friend"
+      className="w-20 h-20 md:w-16 md:h-16" // Same adjustment for this button
+    />
+  </button>
+  <button onClick={useFiftyFifty} disabled={lifelineUsed.fiftyFifty}>
+    <img 
+      src={lifelineUsed.fiftyFifty ? "disabled_50.png" : "fifty.png"} 
+      alt="50:50 Lifeline"
+      className="w-20 h-20 md:w-16 md:h-16" // Same adjustment here
+    />
+  </button>
+</div>
+
         {phoneFriendResponse && (
           <div className="mt-6 flex flex-row justify-between items-center space-y-4">
             <div style={{ flex: 1 }}>
