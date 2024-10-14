@@ -965,21 +965,21 @@ return (
     <img 
       src={lifelineUsed.poll ? "disabled_aud.png" : "poll.png"} 
       alt="Audience Poll"
-      className="w-20 h-20 md:w-16 md:h-16" // Smaller on mobile (w-10 h-10), larger on larger screens (md:w-16 md:h-16)
+      className="w-16 h-16" 
     />
   </button>
   <button onClick={usePhoneFriend} disabled={lifelineUsed.phone}>
     <img 
       src={lifelineUsed.phone ? "disabled_phone.png" : "phonee.png"} 
       alt="Phone a Friend"
-      className="w-20 h-20 md:w-16 md:h-16" // Same adjustment for this button
+      className="w-16 h-16" 
     />
   </button>
   <button onClick={useFiftyFifty} disabled={lifelineUsed.fiftyFifty}>
     <img 
       src={lifelineUsed.fiftyFifty ? "disabled_50.png" : "fifty.png"} 
       alt="50:50 Lifeline"
-      className="w-20 h-20 md:w-16 md:h-16" // Same adjustment here
+      className="w-16 h-16" 
     />
   </button>
 </div>
