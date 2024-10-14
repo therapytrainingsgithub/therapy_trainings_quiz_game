@@ -69,7 +69,6 @@ function selectRandomElements(array: Question[], count: number): Question[] {
 
 
 export default function QuizPage() {
-  const buttonsRef = useRef<(HTMLButtonElement | null)[]>([]);
   const [difficulty, setDifficulty] = useState(1); 
   const [roundWon, setRoundWon] = useState(0); 
   const [audiencePollUsed, setAudiencePollUsed] = useState(false);
@@ -94,7 +93,7 @@ export default function QuizPage() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isAnswerSelected, setIsAnswerSelected] = useState(false);
   const [showAudiencePoll, setShowAudiencePoll] = useState(false);  
-  const [isUsernameEntered, setIsUsernameEntered] = useState(false);
+  const buttonsRef = useRef<(HTMLButtonElement | null)[]>([]);
 
   const [audiencePollResults, setAudiencePollResults] = useState<number[]>([]);
   const [lifelineUsed, setLifelineUsed] = useState({ poll: false, phone: false, fiftyFifty: false });
@@ -110,6 +109,13 @@ export default function QuizPage() {
 
   const inputRef = useRef<HTMLInputElement>(null); // Specify HTMLInputElement type for the ref
 
+  useEffect(() => {
+    // Ensure all buttons are rendered
+    const maxHeight = Math.max(...buttonsRef.current.map(button => button?.offsetHeight || 0));
+    buttonsRef.current.forEach(button => {
+      if (button) button.style.height = `${maxHeight}px`;  // Set the height to the maximum found
+    });
+  }, [options])
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false); // Simulating loading
@@ -146,32 +152,6 @@ export default function QuizPage() {
       updateLeaderboard(score, roundWon);
     }
   }, [hasWonGame, score, roundWon]);
-  useEffect(() => {
-    if (buttonsRef.current.length > 0) {
-      buttonsRef.current.forEach((button) => {
-        if (button) {
-          button.style.height = 'auto'; // Reset to auto
-        }
-      });
-
-      let maxHeight = 0;
-      buttonsRef.current.forEach((button) => {
-        if (button) {
-          const buttonHeight = button.offsetHeight;
-          if (buttonHeight > maxHeight) {
-            maxHeight = buttonHeight;
-          }
-        }
-      });
-
-      // Step 3: Apply the max height to all buttons
-      buttonsRef.current.forEach((button) => {
-        if (button) {
-          button.style.height = `${maxHeight}px`; // Set all buttons to the max height
-        }
-      });
-    }
-  }, [options, currentQuestionIndex]); // Run every time the options or question changes
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -908,26 +888,23 @@ if (isGameOver) {
 
 
 return (
-
   <div className="flex flex-col items-center justify-start" style={{ minHeight: '90vh', paddingTop: '10px' }}>
-    {/* Conditionally render the loader or the game content */}
-
     {loading ? (
       renderLoader() // Show the loader when loading is true
     ) : (
       <>
-        <div className="w-full max-w-4xl flex items-center justify-between mb-2"> {/* Increase max-w */}
-          <div className="text-green-600 text-2xl font-bold">{remainingPoints} Points</div>
+        <div className="w-full max-w-4xl flex items-center justify-between mb-2">
+          <div className="text-green-600 font-bold text-sm md:text-2xl">{remainingPoints} Points</div>
           <div className="flex items-center space-x-2 text-gray-500">
-            <img src="timer.png" alt="Timer Icon" className="h-4 w-4 text-gray-500" />
-            <span className="ml-1 text-sm">
+            <img src="timer.png" alt="Timer Icon" className="h-4 w-4" />
+            <span className="text-xs md:text-sm ml-1">
               {mode === 'classic' ? `${classicTimer}s` : `${advancedTimer}s`}
             </span>
           </div>
         </div>
 
         <div className="w-full max-w-4xl mb-6">
-          <div className="overflow-hidden h-3 mb-4 text-xs flex rounded bg-gray-200">
+          <div className="overflow-hidden h-3 mb-4 text-xs flex bg-gray-200">
             <div
               style={{
                 width: `${mode === 'classic' ? (classicTimer / 30) * 100 : (advancedTimer / 20) * 100}%`,
@@ -939,76 +916,58 @@ return (
 
         <div className="w-full max-w-4xl p-6 bg-[#FCFEF2] rounded-lg shadow-lg">
           <div className="w-full text-left mb-6">
-            <h1 className="text-2xl text-center font-semibold text-[#2A4728]">{question}</h1>
+            <h1 className="text-center font-semibold text-[#2A4728] text-base md:text-2xl">{question}</h1>
           </div>
 
-          {/* Options */}
           <div className="grid grid-cols-2 gap-6 w-full mb-8">
-  {options.map((option, index) => {
-    const isSelected = selectedOption === index;
-    const isCorrect = index === questions[currentQuestionIndex].correctOption;
-    const isIncorrect = selectedOption !== null && selectedOption === index && !isCorrect;
-    const isDisabled = isAnswerSelected || (fiftyFiftyOptions.length > 0 && !fiftyFiftyOptions.includes(index));
+          {options.map((option, index) => {
+  const isSelected = selectedOption === index;
+  const isCorrect = index === questions[currentQuestionIndex].correctOption;
+  const isIncorrect = isSelected && !isCorrect;
+  const isDisabled = isAnswerSelected || (fiftyFiftyOptions.length > 0 && !fiftyFiftyOptions.includes(index));
 
-    return (
-      <Button
-        key={index}
-        ref={(el) => {
-          buttonsRef.current[index] = el;
-        }}
-        onClick={() => handleAnswer(index)}
-        disabled={isDisabled}
-        className={`w-full py-4 px-6 text-lg rounded-full border border-gray-300 shadow-md flex items-center justify-center
-          ${isSelected && isCorrect
-            ? 'bg-green-500 text-white' // Green for correct answer
-            : isSelected && isIncorrect
-            ? 'bg-red-500 text-white'   // Red for incorrect answer
-            : isDisabled
-            ? 'bg-gray-200 text-gray-400 cursor-not-allowed' // Disabled state
-            : 'bg-white text-gray-800 hover:bg-blue-100'    // Default state
-          }`}
-        style={{
-          whiteSpace: 'normal',
-          wordWrap: 'break-word',
-          minHeight: '60px',
-        }}>
-        {String.fromCharCode(65 + index)}. {option}
-      </Button>
-    );
-  })}
+  return (
+    <button
+      key={index}
+      onClick={() => handleAnswer(index)}
+      disabled={isDisabled}
+      className={`flex justify-center items-center w-full py-3 px-4 text-sm md:text-lg border border-gray-300 shadow 
+        ${isSelected && isCorrect ? 'bg-green-500 text-white' :
+        isSelected && isIncorrect ? 'bg-red-500 text-white' :
+        isDisabled ? 'bg-gray-200 text-gray-400 cursor-not-allowed' :
+        'bg-white text-gray-800 hover:bg-blue-100'} 
+        transition-colors duration-300 cursor-pointer rounded my-2 min-h-[50px]`}
+    >
+      {String.fromCharCode(65 + index)}. {option}
+    </button>
+  );
+})}
+
 </div>
 
+          {explanation && selectedOption !== null && (
+            <div className={`${answerCorrect ? 'text-black' : 'text-red-500'} text-sm md:text-xl mt-4 font-bold`}>
+              {!TimeEnd ? explanation : "Time is up! No answer selected."}
+            </div>
+          )}
 
-          {/* Explanation Section */}
-{explanation && selectedOption !== null && (
-  <div className={`${answerCorrect ? 'text-black' : 'text-red-500'} text-xl mt-4 font-bold`}>
-    {!TimeEnd ? explanation : "Time is up! No answer selected."}
-  </div>
-)}
-
-
-          {/* Streak Section */}
           <div className="flex items-center justify-between w-full">
-            <p className="text-lg text-gray-600">Question {currentQuestionIndex + 1}/{questions.length}</p>
-            <div className="text-green-600 text-lg font-semibold">⭐ Streak: {streak}</div>
+            <p className="text-sm md:text-lg text-gray-600">Question {currentQuestionIndex + 1}/{questions.length}</p>
+            <div className="text-green-600 text-sm md:text-lg font-semibold">⭐ Streak: {streak}</div>
           </div>
         </div>
 
-        {/* Lifelines */}
         <div className="flex justify-center space-x-10 mt-6">
-          <button  onClick={useAudiencePoll} disabled={lifelineUsed.poll}>
-            <img src={lifelineUsed.poll ? "disabled_aud.png" : "poll.png"} alt="Audience Poll"/>
+          <button onClick={useAudiencePoll} disabled={lifelineUsed.poll}>
+            <img src={lifelineUsed.poll ? "disabled_aud.png" : "poll.png"} alt="Audience Poll" />
           </button>
           <button onClick={usePhoneFriend} disabled={lifelineUsed.phone}>
             <img src={lifelineUsed.phone ? "disabled_phone.png" : "phonee.png"} alt="Phone a Friend" />
           </button>
           <button onClick={useFiftyFifty} disabled={lifelineUsed.fiftyFifty}>
-            <img  src={lifelineUsed.fiftyFifty ? "disabled_50.png" : "fifty.png"} alt="50:50 Lifeline"
-            />
+            <img src={lifelineUsed.fiftyFifty ? "disabled_50.png" : "fifty.png"} alt="50:50 Lifeline" />
           </button>
         </div>
-
-        {/* Phone a Friend Response */}
         {phoneFriendResponse && (
           <div className="mt-6 flex flex-row justify-between items-center space-y-4">
             <div style={{ flex: 1 }}>
@@ -1061,5 +1020,6 @@ return (
     )}
   </div>
 );
+
   
 }
