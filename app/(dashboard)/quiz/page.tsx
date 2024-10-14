@@ -742,16 +742,13 @@ if (!isQuizStarted) {
   
         <div className="flex flex-col space-y-3 max-w-xs mx-auto">
         <Input
-              ref={inputRef} // Use ref instead of state to control the input value
-              type="text"
-              defaultValue={username} // Set the default value to what is stored in the state
-              // value={tempUsername}
-              // onChange={handleUsernameChange}
-              onBlur={handleUsernameBlur} // Save username when exiting the input field
-              placeholder="Enter your username" // Save username when exiting the input field
-              className="text-center"
-                // className="p-2 border rounded-lg text-gray-700"
-              />
+            ref={inputRef} 
+            type="text"
+            defaultValue={username}
+            onBlur={handleUsernameBlur}
+            placeholder="Enter your username"
+            className="text-center text-lg" // Add text-lg to ensure font-size is at least 16px
+          />
           <Button
             onClick={() => startQuiz('classic')}
             className="w-full bg-[#709D50] text-[#FFFFFF] py-2 text-[12px] sm:text-[14px] font-roboto hover:bg-[#4C6A36] transition duration-150"
