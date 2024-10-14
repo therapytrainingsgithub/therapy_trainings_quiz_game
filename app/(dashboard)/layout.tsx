@@ -16,7 +16,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <img
                   src="/logo.png"
                   alt="Therapy Trainings Logo"
-                  className="h-12 w-auto sm:h-20 py-2 select-none pointer-events-none" // Adjusted sizes for better visibility
+                  className="lg:h-20 w-auto h-16 py-2 select-none pointer-events-none" // Adjusted sizes for better visibility
                   draggable="false"
                 />
               </Link>

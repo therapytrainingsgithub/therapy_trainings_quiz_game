@@ -110,12 +110,16 @@ export default function QuizPage() {
   const inputRef = useRef<HTMLInputElement>(null); // Specify HTMLInputElement type for the ref
 
   useEffect(() => {
-    // Ensure all buttons are rendered
+    // Calculate the max height dynamically
     const maxHeight = Math.max(...buttonsRef.current.map(button => button?.offsetHeight || 0));
     buttonsRef.current.forEach(button => {
-      if (button) button.style.height = `${maxHeight}px`;  // Set the height to the maximum found
+      if (button) {
+        button.style.height = `${maxHeight}px`;  // Set all buttons to the max height dynamically
+      }
     });
-  }, [options])
+  }, [options]);
+
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false); // Simulating loading
@@ -347,7 +351,8 @@ const fetchLeaderboard = async () => {
     setLeaderboard([]);
   }
 };
-const returnToMenu = () => {
+const returnToMenu = async () => {
+  await updateLeaderboard(score, roundWon);
   resetGame();  // Reset the game state
   handleGameEndd(false);  // Do not update leaderboard
   window.location.href = '/';  // Navigate to the main menu
@@ -776,115 +781,108 @@ if (!isQuizStarted) {
 
 if (hasWonGame) {
   return (
-    <div className="flex flex-col py-6 items-center justify-center min-h-screen bg-[#F5F5F5] overflow-x-hidden">  {/* Prevent horizontal scrolling */}
-      <Card className="w-full max-w-md sm:max-w-2xl  sm:p-8 bg-white rounded-lg shadow-lg text-center"> {/* Added max-w-md for mobile */}
-        
-       
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F5] overflow-x-hidden">
+      <Card className="w-full max-w-md sm:max-w-2xl sm:p-8 bg-white rounded-lg shadow-lg text-center">
         <p className="text-gray-800 text-lg mb-4 font-bold">
-          Congratulations , you have completed all 10 rounds.
+          Congratulations, you have completed all 10 rounds.
         </p>
         
-        <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-4 mb-4">
+        <div className="flex flex-wrap justify-center gap-2 mt-4 mb-4">
           <Button
             onClick={resetGame}
-            className="bg-black text-white py-2 px-6 text-lg font-bold hover:bg-opacity-90 transition duration-150"
+            className="bg-black text-white py-2 px-4 text-sm sm:py-2 sm:px-6 sm:text-lg font-bold hover:bg-opacity-90 transition duration-150"
           >
             Main Menu
           </Button>
           <Button
             onClick={restartGame}
-            className="bg-[#709D51] text-white py-2 px-6 text-lg font-bold hover:bg-[#50822D] transition duration-150"
+            className="bg-[#709D51] text-white py-2 px-4 text-sm sm:py-2 sm:px-6 sm:text-lg font-bold hover:bg-[#50822D] transition duration-150"
           >
             Play Again
           </Button>
         </div>
-  
+
         {/* Score and Leaderboard Section */}
-        <div className="flex flex-col sm:flex-row justify-around mb-4 space-y-4 sm:space-y-0 sm:space-x-4">
+        <div className="flex flex-wrap justify-around mb-4 space-y-4 sm:space-y-0">
           <div className="flex flex-col items-center">
-            <div className="text-gray-500 text-lg font-bold mb-2">Your Score</div>
+            <div className="text-gray-500 text-sm sm:text-lg font-bold mb-2">Your Score</div>
             <div className="flex items-center justify-center bg-[#709D51] text-white rounded-lg px-6 py-3">
-              <div className="text-5xl font-bold">
+              <div className="text-3xl sm:text-5xl font-bold">
                 {score}
               </div>
-              <div className="text-xl ml-2">Points</div>
+              <div className="text-lg ml-2">Points</div>
             </div>
           </div>
           <div className="flex flex-col items-center">
-            <div className="text-gray-500 text-lg font-bold mb-2">Current Leader</div>
+            <div className="text-gray-500 text-sm sm:text-lg font-bold mb-2">Current Leader</div>
             <div className="flex items-center justify-center bg-[#709D51] text-white rounded-lg px-6 py-3">
-              <div className="text-5xl font-bold">
+              <div className="text-3xl sm:text-5xl font-bold">
                 {Math.max(...leaderboard.map(entry => entry.score))}
               </div>
-              <div className="text-xl ml-2">Points</div>
+              <div className="text-lg ml-2">Points</div>
             </div>
           </div>
         </div>
 
-        {/* Leaderboard */}
         {renderLeaderboard()}
-
       </Card>
     </div>
   );
 }  
 
 if (isGameOver) {
-
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F5] overflow-x-hidden  py-6">  {/* Prevent horizontal scrolling */}
-      <Card className=" w-full max-w-md sm:max-w-2xl sm:p-8 bg-white rounded-lg shadow-lg text-center"> {/* Added max-w-md for mobile */}
-        
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F5] overflow-x-hidden py-6">
+      <Card className="w-full max-w-md sm:max-w-2xl sm:p-8 bg-white rounded-lg shadow-lg text-center">
         <div className="text-2xl font-bold text-gray-800 mb-4">Game Over</div>
-        <p className="text-red-500 text-lg mb-4 font-bold">
+        <p className="text-red-500 text-sm sm:text-lg mb-4 font-bold">
           {explanation}
         </p>
         
-        <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-4 mb-4">
+        <div className="flex flex-wrap justify-center gap-2 mt-4 mb-4">
           <Button
             onClick={resetGame}
-            className="bg-black text-white py-2 px-6 text-lg font-bold hover:bg-opacity-90 transition duration-150"
+            className="bg-black text-white py-2 px-4 text-sm sm:py-2 sm:px-6 sm:text-lg font-bold hover:bg-opacity-90 transition duration-150"
           >
             Main Menu
           </Button>
           <Button
             onClick={restartGame}
-            className="bg-[#709D51] text-white py-2 px-6 text-lg font-bold hover:bg-[#50822D] transition duration-150"
+            className="bg-[#709D51] text-white py-2 px-4 text-sm sm:py-2 sm:px-6 sm:text-lg font-bold hover:bg-[#50822D] transition duration-150"
           >
             Play Again
           </Button>
         </div>
-  
+
         {/* Score and Leaderboard Section */}
-        <div className="flex flex-col sm:flex-row justify-around mb-4 space-y-4 sm:space-y-0 sm:space-x-4">
-          <div className="flex flex-col items-center">
-            <div className="text-gray-500 text-lg font-bold mb-2">Your Score</div>
-            <div className="flex items-center justify-center bg-[#709D51] text-white rounded-lg px-6 py-3">
-              <div className="text-5xl font-bold">
+        <div className="flex flex-col sm:flex-row justify-around mb-4 space-y-4 sm:space-y-0 items-center">
+          <div className="flex flex-col items-center w-full sm:w-auto">
+            <div className="text-gray-500 text-sm sm:text-lg font-bold mb-2">Your Score</div>
+            <div className="flex items-center justify-center bg-[#709D51] text-white rounded-lg px-4 py-2">
+              <div className="text-xl sm:text-3xl font-bold">
                 {score}
               </div>
-              <div className="text-xl ml-2">Points</div>
+              <div className="text-sm ml-2">Points</div>
             </div>
           </div>
-          <div className="flex flex-col items-center">
-            <div className="text-gray-500 text-lg font-bold mb-2">Current Leader</div>
-            <div className="flex items-center justify-center bg-[#709D51] text-white rounded-lg px-6 py-3">
-              <div className="text-5xl font-bold">
+          <div className="flex flex-col items-center w-full sm:w-auto">
+            <div className="text-gray-500 text-sm sm:text-lg font-bold mb-2">Current Leader</div>
+            <div className="flex items-center justify-center bg-[#709D51] text-white rounded-lg px-4 py-2">
+              <div className="text-xl sm:text-3xl font-bold">
                 {Math.max(...leaderboard.map(entry => entry.score))}
               </div>
-              <div className="text-xl ml-2">Points</div>
+              <div className="text-sm ml-2">Points</div>
             </div>
           </div>
         </div>
 
-        {/* Leaderboard */}
         {renderLeaderboard()}
-
       </Card>
     </div>
   );
 }
+
+
 
 
 return (
@@ -920,30 +918,38 @@ return (
           </div>
 
           <div className="grid grid-cols-2 gap-6 w-full mb-8">
-          {options.map((option, index) => {
-  const isSelected = selectedOption === index;
-  const isCorrect = index === questions[currentQuestionIndex].correctOption;
-  const isIncorrect = isSelected && !isCorrect;
-  const isDisabled = isAnswerSelected || (fiftyFiftyOptions.length > 0 && !fiftyFiftyOptions.includes(index));
+      {options.map((option, index) => {
+        const isSelected = selectedOption === index;
+        const isCorrect = index === questions[currentQuestionIndex].correctOption;
+        const isIncorrect = isSelected && !isCorrect;
+        const isDisabled = isAnswerSelected || (fiftyFiftyOptions.length > 0 && !fiftyFiftyOptions.includes(index));
 
-  return (
-    <button
-      key={index}
-      onClick={() => handleAnswer(index)}
-      disabled={isDisabled}
-      className={`flex justify-center items-center w-full py-3 px-4 text-sm md:text-lg border border-gray-300 shadow 
-        ${isSelected && isCorrect ? 'bg-green-500 text-white' :
-        isSelected && isIncorrect ? 'bg-red-500 text-white' :
-        isDisabled ? 'bg-gray-200 text-gray-400 cursor-not-allowed' :
-        'bg-white text-gray-800 hover:bg-blue-100'} 
-        transition-colors duration-300 cursor-pointer rounded my-2 min-h-[50px]`}
-    >
-      {String.fromCharCode(65 + index)}. {option}
-    </button>
-  );
-})}
+        return (
+          <button
+            key={index}
+            ref={(el) => { buttonsRef.current[index] = el; }}
+            onClick={() => handleAnswer(index)}
+            disabled={isDisabled}
+            className={`flex justify-center items-center w-full py-3 px-4 text-sm md:text-lg border border-gray-300 shadow 
+              text-center transition-colors duration-300 cursor-pointer rounded my-2
+              ${isSelected && isCorrect ? 'bg-green-500 text-white' :
+              isSelected && isIncorrect ? 'bg-red-500 text-white' :
+              isDisabled ? 'bg-gray-200 text-gray-400 cursor-not-allowed' :
+              'bg-white text-gray-800 hover:bg-blue-100'}`}
+            style={{ 
+              wordBreak: 'break-word',   // Ensure long words break inside the button
+              minHeight: '60px',         // Ensure all buttons have a minimum height
+              width: '100%',             // Ensure buttons take up full width within the grid
+            }}
+          >
+            {String.fromCharCode(65 + index)}. {option}
+          </button>
+        );
+      })}
+    </div>
 
-</div>
+
+
 
           {explanation && selectedOption !== null && (
             <div className={`${answerCorrect ? 'text-black' : 'text-red-500'} text-sm md:text-xl mt-4 font-bold`}>
