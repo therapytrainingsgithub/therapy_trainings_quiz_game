@@ -12,7 +12,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
         <div className="flex flex-col">
           <header className="sticky top-0 z-30 flex h-20 items-center justify-between bg-white px-8 sm:static sm:h-auto sm:bg-white">
             <div className="flex items-center gap-6">
-              <Link href="/">
+            <Link href="https://www.therapytrainings.com" target="_blank" rel="noopener noreferrer">
                 <img
                   src="/logo.png"
                   alt="Therapy Trainings Logo"
