@@ -5,7 +5,7 @@ import { UserContextProvider } from '@/lib/userContext';
 import { Toaster } from 'react-hot-toast'; // Import Toaster
 
 export const metadata = {
-  title: 'Quiz Game',
+  title: 'DSM Study Guide- Trivia Challenge by Therapy Trainings®',
   description: 'Challenge your DSM knowledge with our interactive trivia game. Test your expertise in diagnostic criteria, disorders, and clinical concepts. A fun, engaging way for mental health professionals to sharpen their diagnostic skills.'
 };
 interface RootLayoutProps {
