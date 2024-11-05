@@ -724,7 +724,7 @@ if (!isQuizStarted) {
   
       <div className="relative z-10 max-w-2xl mx-auto px-2 sm:px-4" style={{ overflowX: 'hidden' }}>
         <h1 className="text-[#191919] text-[22px] sm:text-[28px] font-roboto font-bold mb-2 leading-none">
-          Therapy Trainings™ Diagnostic Challenge
+          Therapy Trainings® Diagnostic Challenge
         </h1>
   
         <p className="text-[#191919] text-[14px] sm:text-[16px] font-roboto mb-4">
